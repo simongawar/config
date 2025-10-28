@@ -4,11 +4,14 @@ spring:
   boot:
     admin:
       context-path: /admin
+
 server:
-  port: 8070
+  port: 8082
+
 eureka:
   instance:
     hostname: eurekaserver
+    preferIpAddress: true
   client:
     registerWithEureka: false
     fetchRegistry: false
@@ -16,11 +19,20 @@ eureka:
       defaultZone: http://${eureka.instance.hostname}:${server.port}/eureka/
   server:
     waitTimeInMsWhenSyncEmpty: 5
-      
-      
+
 management:
   endpoints:
     web:
       exposure:
         include: "*"
-   
+  endpoints:
+    enabled-by-default: true
+
+spring:
+  cloud:
+    loadbalancer:
+      ribbon:
+        enabled: false
+
+signing:
+  key: "345345fsdfsf5345"
