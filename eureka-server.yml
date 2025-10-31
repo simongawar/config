@@ -6,7 +6,7 @@ spring:
       context-path: /admin
 
 server:
-  port: 8082
+  port: 8070
 
 eureka:
   instance:
@@ -25,14 +25,10 @@ management:
     web:
       exposure:
         include: "*"
-  endpoints:
-    enabled-by-default: true
-
-spring:
-  cloud:
-    loadbalancer:
-      ribbon:
-        enabled: false
-
-signing:
-  key: "345345fsdfsf5345"
+  endpoint:
+    health:
+      show-details: always
+  metrics:
+    export:
+      prometheus:
+        enabled: true
