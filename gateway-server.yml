@@ -1,12 +1,6 @@
 server:
   port: 8072
 
-logstash:
-  host: 3.136.161.26:5000
-
-logging:
-  config: classpath:logback-delayed.xml
-
 eureka:
   instance:
     preferIpAddress: true
@@ -15,46 +9,45 @@ eureka:
     fetchRegistry: true
     serviceUrl:
       defaultZone: http://eurekaserver:8070/eureka/
-
+      
 spring:
-  zipkin:
-    base-url: http://zipkin:9411
-  sleuth:
-    sampler:
-      percentage: 1
+  # TRACING: MIGRATED to Micrometer Tracing for Spring Boot 3
+  # REMOVED: zipkin:
+  # REMOVED:   baseUrl: http://zipkin:9411
+  # REMOVED: sleuth:
+  # REMOVED:   sampler:
+  # REMOVED:     percentage: 1
+  
   cloud:
-    loadbalancer:
-      ribbon:
-        enabled: false
+    # LOAD BALANCER: Ribbon is replaced by Spring Cloud LoadBalancer, and this property is no longer used.
+    # REMOVED: loadbalancer.ribbon.enabled: false
+    
     gateway:
       routes:
-        - id: organization-service
-          uri: lb://organization-service
-          predicates:
-            - Path=/organization/**
-          filters:
-            - RewritePath=/organization/(?<path>.*), /${path}
-            - RemoveRequestHeader=Cookie,Set-Cookie
-        - id: licensing-service
-          uri: lb://licensing-service
-          predicates:
-            - Path=/license/**
-          filters:
-            - RewritePath=/license/(?<path>.*), /${path}
-            - RemoveRequestHeader=Cookie,Set-Cookie
-
-keycloak:
-  auth-server-url: http://localhost:8080/auth
-  bearer-only: true
-  credentials:
-    secret: 5988f899-a5bf-4f76-b15f-f1cd0d2c81ba
-  realm: spmia-realm
-  resource: ostock
-  ssl-required: external
-  use-resource-role-mappings: true
-
+      - id: organization-service
+        uri: lb://organization-service
+        predicates:
+        - Path=/organization/**
+        filters:
+        - RewritePath=/organization/(?<path>.*), /$\{path}
+        - RemoveRequestHeader=Cookie,Set-Cookie
+      - id: licensing-service
+        uri: lb://licensing-service
+        predicates:
+        - Path=/license/**
+        filters:
+        - RewritePath=/license/(?<path>.*), /$\{path}
+        - RemoveRequestHeader=Cookie,Set-Cookie
+          
 management:
   endpoints:
     web:
       exposure:
         include: "*"
+  # TRACING: New Micrometer Tracing configuration
+  tracing:
+    sampling:
+      probability: 1.0 # Sets 100% sampling rate (replaces sleuth.sampler.percentage: 1)
+  zipkin:
+    tracing:
+      endpoint: http://zipkin:9411/api/v2/spans # New property for Zipkin endpoint (replaces spring.zipkin.baseUrl)
