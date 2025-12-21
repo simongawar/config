@@ -1,30 +1,31 @@
+
 spring:
   application:
-    name: configserver
+    name: config-server
   profiles:
     active:
-    - native # Activates the Native Environment Repository
+      - native, git
   cloud:
     config:
       server:
         native:
-          # Config Server will look for files (e.g., licensingservice.yml) 
-          # in the 'config' folder inside src/main/resources
-          search-locations: 
-          - classpath:/config 
-        # The Git repository configuration remains commented out:
-        #git:
-        #  uri: https://github.com/ihuaylupo/config.git
-        #  searchPaths: licensingservice
-    
+          search-locations: classpath:/config
+        # Uncomment and configure Git if needed
+        # git:
+        #   uri: https://github.com/ihuaylupo/config.git
+        #   searchPaths: licensingservice
+
+# Server settings
 server:
   port: 8071
-  
-encrypt:
-  key: fje83Ki8403Iod87dne7Yjsl3THueh48jfuO9j4U2hf64Lo # Encryption key for ciphered properties
 
+# Encryption key for Spring Cloud Config
+encrypt:
+  key: fje83Ki8403Iod87dne7Yjsl3THueh48jfuO9j4U2hf64Lo
+
+# Enable all Spring Boot Actuator endpoints
 management:
   endpoints:
     web:
       exposure:
-        include: "*" # Exposes all Actuator endpoints via web
+        include: "*"
